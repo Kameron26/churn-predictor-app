@@ -8,7 +8,7 @@ st.title("Customer Churn Predictor")
 
 #Load saved model
 model = joblib.load("churn_model.pkl")
-
+model_columns = ['gender_Male', 'SeniorCitizen', 'Partner_Yes','Dependent_Yes', 'tenure', 'PhoneService_Yes','MultipleLines_Yes','InternetService_Fiber optic','InternetService_No','OnlineSecurity_Yes','OnlineBackup_Yes','DeviceProtection_Yes','TechSupport_Yes','StreamingTV_Yes','StreamingMovies_Yes','Contract_One year','Contract_Two year','PaperlessBilling_Yes','PaymentMethod_Electronic check','PaymentMethod_Mailed check','MonthlyCharges','TotalCharges']
 #Collect user input (as form or sidebar)
 st.header("Customer Details")
 gender = st.selectbox("Gender", ["Male","Female"])
@@ -25,9 +25,11 @@ input_df = pd.DataFrame(input_dict)
 
 #Predict
 if st.button("Predict Churn"):
-    prediction = model.predict(input_df)[0]
-    probability = model.predict_proba(input_df)[0][1]
-    if prediction == 1:
-        st.error(f"High Risk of Churn - {round(probability*100,2)}%")
-    else:
-        st.success(f"Customer likely to stay - {round((100-probability)*100,2)}%")
+  input_df = pd.get_dummies(input_df)
+  input_df = input_df.reindex(columns = model_columns, fill_value=0)
+  prediction = model.predict(input_df)[0]
+  probability = model.predict_proba(input_df)[0][1]
+  #if prediction == 1:
+        #st.error(f"High Risk of Churn - {round(probability*100,2)}%")
+  #else:
+        #st.success(f"Customer likely to stay - {round((100-probability)*100,2)}%")
